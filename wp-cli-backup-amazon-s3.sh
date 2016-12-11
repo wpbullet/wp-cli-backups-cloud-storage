@@ -45,7 +45,7 @@ for SITE in ${SITELIST[@]}; do
     rm $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
 
     #upload packages
-    S3DIRUP=$S3DIR/$SITE/$DATE"
+    S3DIRUP=$S3DIR/$SITE/$DATE
     aws s3 mv $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz $S3DIR
     aws s3 mv $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz $S3DIR
 
