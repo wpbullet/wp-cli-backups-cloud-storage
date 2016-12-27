@@ -3,7 +3,7 @@
 # Author: Mike
 
 #define local path for backups
-BACKUPPATH="~/backups"
+BACKUPPATH="/tmp/backups"
 
 #define remote backup path
 BACKUPPATHREM="WP Bullet Backups"
