@@ -31,16 +31,16 @@ mkdir -p $BACKUPPATH
 for SITE in ${SITELIST[@]}; do
     echo Backing up $SITE
     #enter the WordPress folder
-    cd $SITESTORE/$SITE
+    #cd $SITESTORE/$SITE
     if [ ! -e $BACKUPPATH/$SITE ]; then
         mkdir $BACKUPPATH/$SITE
     fi
 
     #back up the WordPress folder
-    tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz .
+    tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz $SITESTORE/$SITE
 
     #back up the WordPress database
-    wp db export $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql --allow-root --skip-themes --skip-plugins
+    wp db export $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql --path=$SITESTORE/$SITE --allow-root --skip-themes --skip-plugins
     tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
     rm $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
 
