@@ -35,6 +35,12 @@ BACKUPSID=$(gdrive list --no-header | grep $BACKUPPATHREM | awk '{ print $1}')
 
 #start the loop
 for SITE in ${SITELIST[@]}; do
+    #delete old backup, get folder id and delete if exists
+    OLDBACKUP=$(gdrive list --no-header | grep $DAYSKEPT-$SITE | awk '{ print $1}')
+    if [ ! -z "$OLDBACKUP" ]; then
+        gdrive delete $OLDBACKUP
+    fi
+    
     # create the local backup folder if it doesn't exist
     if [ ! -e $BACKUPPATH/$SITE ]; then
         mkdir $BACKUPPATH/$SITE
@@ -63,12 +69,6 @@ for SITE in ${SITELIST[@]}; do
     gdrive upload --parent $SITEFOLDERID --delete $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz
     #upload wordpress database
     gdrive upload --parent $SITEFOLDERID --delete $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz
-
-    #delete old backup, get folder id and delete if exists
-    OLDBACKUP=$(gdrive list --no-header | grep $DAYSKEPT-$SITE | awk '{ print $1}')
-    if [ ! -z "$OLDBACKUP" ]; then
-        gdrive delete $OLDBACKUP
-    fi 
 done
 
 #Fix permissions
