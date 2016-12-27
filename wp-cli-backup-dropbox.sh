@@ -50,7 +50,7 @@ for SITE in ${SITELIST[@]}; do
     cd $SITESTORE/$SITE
   
     #back up the WordPress folder
-    tar -czf $BACKUPPATH/$SITENAME/$SITE/$DATEFORM-$SITE.tar.gz .
+    tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz .
     #back up the WordPress database, compress and clean up
     wp db export $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql --allow-root --skip-themes --skip-plugins
     tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
