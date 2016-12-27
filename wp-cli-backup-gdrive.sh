@@ -3,7 +3,7 @@
 # Author: Mike
 
 #define local path for backups
-BACKUPPATH=~/backups
+BACKUPPATH=/tmp/backups
 
 #path to WordPress installations
 SITESTORE=/var/www
