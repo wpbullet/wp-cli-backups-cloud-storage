@@ -3,13 +3,10 @@
 # Author: Mike
 
 #define local path for backups
-BACKUPPATH="/tmp/backups"
-
-#define remote backup path
-BACKUPPATHREM="WP Bullet Backups"
+BACKUPPATH=/tmp/backups
 
 #path to WordPress installations
-SITESTORE="/var/www"
+SITESTORE=/var/www
 
 #date prefix
 DATEFORM=$(date +"%Y-%m-%d")
@@ -26,50 +23,39 @@ SITELIST=($(ls -lh $SITESTORE | awk '{print $9}'))
 #make sure the backup folder exists
 mkdir -p $BACKUPPATH
 
-#check remote backup folder exists on gdrive
-BACKUPSID=$(gdrive list --no-header | grep $BACKUPPATHREM | awk '{ print $1}')
-    if [ -z "$BACKUPSID" ]; then
-        gdrive mkdir $BACKUPPATHREM
-        BACKUPSID=$(gdrive list --no-header | grep $BACKUPPATHREM | awk '{ print $1}')
-    fi
-
 #start the loop
 for SITE in ${SITELIST[@]}; do
-    #delete old backup, get folder id and delete if exists
-    OLDBACKUP=$(gdrive list --no-header | grep $DAYSKEPT-$SITE | awk '{ print $1}')
-    if [ ! -z "$OLDBACKUP" ]; then
-        gdrive delete $OLDBACKUP
+    #check if there are old backups and delete them
+    EXISTS=$(dropbox_uploader list /$SITE | grep -E $DAYSKEPT.*.tar.gz | awk '{print $3}') 
+    if [ ! -z $EXISTS ]; then
+        dropbox_uploader delete /$SITE/$DAYSKEPT-$SITE.tar.gz /$SITE/
+        dropbox_uploader delete /$SITE/$DAYSKEPT-$SITE.sql.gz /$SITE/
     fi
-    
-    # create the local backup folder if it doesn't exist
+    echo Backing up $SITE
+    #enter the WordPress folder
+    cd $SITESTORE/$SITE
     if [ ! -e $BACKUPPATH/$SITE ]; then
         mkdir $BACKUPPATH/$SITE
     fi
 
-    #entire the WordPress folder
-    cd $SITESTORE/$SITE
-  
     #back up the WordPress folder
     tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz .
-    #back up the WordPress database, compress and clean up
+
+    #back up the WordPress database
     wp db export $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql --allow-root --skip-themes --skip-plugins
     tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
     rm $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
-    
-    #get current folder ID
-    SITEFOLDERID=$(gdrive list --no-header | grep $SITE | awk '{ print $1}')
 
-    #create folder if doesn't exist
-    if [ -z "$SITEFOLDERID" ]; then
-        gdrive mkdir --parent $BACKUPSID $SITE
-        SITEFOLDERID=$(gdrive list --no-header | grep $SITE | awk '{ print $1}')
-    fi
-
-    #upload WordPress tar
-    gdrive upload --parent $SITEFOLDERID --delete $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz
-    #upload wordpress database
-    gdrive upload --parent $SITEFOLDERID --delete $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz
+    #upload packages
+    dropbox_uploader upload $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz /$SITE/
+    dropbox_uploader upload $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz /$SITE/
 done
+
+#if you want to delete all local backups
+#rm -rf $BACKUPPATH/*
+
+#delete old backups locally over DAYSKEEP days old
+find $BACKUPPATH -type d -mtime +$DAYSKEEP -exec rm -rf {} \;
 
 #Fix permissions
 sudo chown -R www-data:www-data $SITESTORE
