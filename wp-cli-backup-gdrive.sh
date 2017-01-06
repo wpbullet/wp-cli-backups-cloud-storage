@@ -6,7 +6,7 @@
 BACKUPPATH="/tmp/backups"
 
 #define remote backup path
-BACKUPPATHREM="WP Bullet Backups"
+BACKUPPATHREM="WP-Bullet-Backups"
 
 #path to WordPress installations
 SITESTORE="/var/www"
@@ -53,7 +53,8 @@ for SITE in ${SITELIST[@]}; do
     tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz .
     #back up the WordPress database, compress and clean up
     wp db export $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql --allow-root --skip-themes --skip-plugins
-    tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
+    #tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
+    cat $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql | gzip > $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz
     rm $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
     
     #get current folder ID
