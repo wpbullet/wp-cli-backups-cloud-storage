@@ -67,9 +67,9 @@ for SITE in ${SITELIST[@]}; do
     fi
 
     #upload WordPress tar
-    gdrive upload --parent $SITEFOLDERID --delete $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz
-    #upload wordpress database
     gdrive upload --parent $SITEFOLDERID --delete $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz
+    #upload wordpress database
+    gdrive upload --parent $SITEFOLDERID --delete $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz
 done
 
 #Fix permissions
