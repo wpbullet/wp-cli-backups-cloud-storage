@@ -52,7 +52,7 @@ for SITE in ${SITELIST[@]}; do
     #back up the WordPress folder
     tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz .
     #back up the WordPress database, compress and clean up
-    wp db export $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql --allow-root --skip-themes --skip-plugins
+    wp db export $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql --single-transaction --quick --lock-tables=false --allow-root --skip-themes --skip-plugins
     #tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
     cat $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql | gzip > $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz
     rm $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
