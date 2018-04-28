@@ -18,7 +18,7 @@ DAYSKEEP=7
 DAYSKEPT=$(date +"%Y-%m-%d" -d "-$DAYSKEEP days")
 
 #create array of sites based on folder names
-SITELIST=($(ls -lh $SITESTORE | awk '{print $9}'))
+SITELIST=($(ls -d $SITESTORE/* | awk -F '/' '{print $NF}'))
 
 #make sure the backup folder exists
 mkdir -p $BACKUPPATH
@@ -42,7 +42,7 @@ for SITE in ${SITELIST[@]}; do
     tar -czf $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz .
 
     #back up the WordPress database
-    wp db export $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql --single-transaction --quick --lock-tables=false --allow-root --skip-themes --skip-plugins
+    wp db export $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql --all-tables --single-transaction --quick --lock-tables=false --allow-root --skip-themes --skip-plugins
     cat $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql | gzip > $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz
     rm $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql
 
