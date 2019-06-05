@@ -46,12 +46,12 @@ for SITE in ${SITELIST[@]}; do
 
     #upload packages
     S3DIRUP=$S3DIR/$SITE/$DATE
-    aws s3 mv $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz $S3DIR
-    aws s3 mv $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz $S3DIR
+    aws s3 mv $BACKUPPATH/$SITE/$DATEFORM-$SITE.tar.gz $S3DIRUP
+    aws s3 mv $BACKUPPATH/$SITE/$DATEFORM-$SITE.sql.gz $S3DIRUP
 
     #delete old backups
-    S3REM=$S3DIR/
-    aws s3 rm $S3REM/$DAYSKEPT
+    S3REM=$S3DIR/$SITE
+    aws s3 rm --recursive $S3REM/$DAYSKEPT
 done
 
 #if you want to delete all local backups
